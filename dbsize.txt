@@ -1,0 +1,22 @@
+REM
+REM  Find the size of database in GB
+REM
+
+set linesize 75
+col size_gb format 99,999.99
+col file_type format a15
+
+SELECT name, to_char(sysdate,'DD-MON-YYYY HH24:MI:SS') from v$database
+/
+
+SELECT * FROM 
+(
+SELECT 'DATAFILEs' file_type, SUM(bytes)/1024/1024/1024 size_gb from v$datafile
+union all
+SELECT 'TEMPFILEs' file_type, SUM(bytes)/1024/1024/1024 size_gb from v$tempfile
+union all
+SELECT 'LOGFILEs' file_type , SUM(bytes)/1024/1024/1024 size_gb from v$log
+)
+/
+
+
